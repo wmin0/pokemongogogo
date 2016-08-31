@@ -42,20 +42,20 @@ const getLeftTime = (ts) => {
 };
 
 const getMsg = (pk) => {
-  return `${pk.d6} 距離${getDistance([ pk.d4, pk.d5 ]).toFixed(2)}km 剩下${getLeftTime(pk.d3)}`;
+  return `${pk.nameZhTw} 距離${getDistance([ pk.lat, pk.lng ]).toFixed(2)}km 剩下${getLeftTime(pk.time)}`;
 };
 
 const handleResponse = (data) => {
-  console.error('res', data.pk123);
+  console.error('res', data.pokemons);
   // TODO: configurable
-  pokemons = data.pk123.filter((pk) => pk.d7.length > 2);
+  pokemons = data.pokemons.filter((pk) => pk.stars.length > 2);
   emit(document, 'changepokemon');
   pokemons.forEach((pk) => speak(getMsg(pk)));
 };
 
 const func = () => {
   let xhr = new XMLHttpRequest();
-  let url = `https://poke5566.com/pokemons?v1=${settings.bounding[1][0]}&v2=${settings.bounding[1][1]}&v3=${settings.bounding[0][0]}&v4=${settings.bounding[0][1]}`;
+  let url = `https://poke5566.com/pokemons?lat0=${settings.bounding[1][0]}&lng0=${settings.bounding[1][1]}&lat1=${settings.bounding[0][0]}&lng1=${settings.bounding[0][1]}`;
   xhr.addEventListener('load', (event) => {
     handleResponse(JSON.parse(xhr.responseText));
     reset();

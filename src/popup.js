@@ -79,10 +79,10 @@ const draw = () => {
     // TODO: pic
     markers.push(new google.maps.Marker({
       map: map,
-      title: pk.d6,
+      title: pk.nameZhTw,
       position: {
-        lat: pk.d4,
-        lng: pk.d5
+        lat: pk.lat,
+        lng: pk.lng
       }
     }));
   });
