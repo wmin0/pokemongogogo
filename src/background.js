@@ -55,7 +55,7 @@ const handleResponse = (data) => {
 
 const func = () => {
   let xhr = new XMLHttpRequest();
-  let url = `https://poke5566.com/pokemons?lat0=${settings.bounding[1][0]}&lng0=${settings.bounding[1][1]}&lat1=${settings.bounding[0][0]}&lng1=${settings.bounding[0][1]}`;
+  let url = `https://poke5566.com/pokemons?latA=${settings.bounding[1][0]}&lngA=${settings.bounding[1][1]}&latB=${settings.bounding[0][0]}&lngB=${settings.bounding[0][1]}`;
   xhr.addEventListener('load', (event) => {
     handleResponse(JSON.parse(xhr.responseText));
     reset();
