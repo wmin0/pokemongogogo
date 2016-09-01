@@ -11,6 +11,9 @@
   "pause": {
     "message": "暫停"
   },
+  "volume": {
+    "message": "音量"
+  },
   "edit": {
     "message": "編輯"
   },

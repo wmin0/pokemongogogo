@@ -18,7 +18,7 @@ const speak = (msg) => {
   utter.voice = voices.find((v) => v.lang === 'zh-TW');
   utter.pitch = 1;
   utter.rate = 0.7;
-  utter.volume = 1;
+  utter.volume = settings.volume;
   speechSynthesis.speak(utter);
 };
 
@@ -47,15 +47,16 @@ const getMsg = (pk) => {
 
 const handleResponse = (data) => {
   console.error('res', data.pokemons);
+  speechSynthesis.cancel();
   // TODO: configurable
-  pokemons = data.pokemons.filter((pk) => pk.stars.length > 2);
+  pokemons = data.pokemons.filter((pk) => pk.stars.length > 1);
   emit(document, 'changepokemon');
   pokemons.forEach((pk) => speak(getMsg(pk)));
 };
 
 const func = () => {
   let xhr = new XMLHttpRequest();
-  let url = `https://poke5566.com/pokemons?latA=${settings.bounding[1][0]}&lngA=${settings.bounding[1][1]}&latB=${settings.bounding[0][0]}&lngB=${settings.bounding[0][1]}`;
+  let url = `https://poke5566.com/pokemons?latM=${settings.bounding[1][0]}&lngM=${settings.bounding[1][1]}&latN=${settings.bounding[0][0]}&lngN=${settings.bounding[0][1]}`;
   xhr.addEventListener('load', (event) => {
     handleResponse(JSON.parse(xhr.responseText));
     reset();
@@ -74,9 +75,10 @@ const reset = (ms) => {
   if (settings.center.length === 0) {
     return;
   }
-  if (!settings.pause) {
-    timeout = setTimeout(func, ms || 60000);
+  if (settings.pause) {
+    return;
   }
+  timeout = setTimeout(func, ms || 60000);
 };
 
 const set = (values) => {
@@ -87,6 +89,7 @@ const load = () => {
   return new Promise((resolve, reject) => {
     chrome.storage.sync.get({
       pause: false,
+      volume: 1,
       center: [],
       bounding: []
     }, resolve)

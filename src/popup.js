@@ -26,6 +26,7 @@ const unmask = () => {
 
 const set = (values) => {
   document.querySelector('#pause').checked = values.pause;
+  document.querySelector('#volume').value = values.volume;
   if (values.center.length === 0) {
     document.querySelector('#alert').innerText = chrome.i18n.getMessage('alert_not_setting');
     return;
@@ -45,7 +46,8 @@ const set = (values) => {
 
 const get = () => {
   return {
-    pause: document.querySelector('#pause').checked
+    pause: document.querySelector('#pause').checked,
+    volume: +document.querySelector('#volume').value
   };
 };
 
@@ -64,6 +66,7 @@ const load = () => {
     new Promise((resolve, reject) => {
       chrome.storage.sync.get({
         pause: false,
+        volume: 1,
         center: [],
         bounding: []
       }, resolve)
@@ -95,6 +98,7 @@ const destroyEvent = () => {
 
 const initEvent = () => {
   document.querySelector('#pause').addEventListener('click', save);
+  document.querySelector('#volume').addEventListener('change', save);
   chrome.extension.getBackgroundPage().document.addEventListener('changepokemon', draw);
   window.addEventListener('unload', destroyEvent);
 };
