@@ -28,11 +28,10 @@ let initMapPromise = new Promise((resolve, reject) => {
 
 const latlngAdd = (latlng, kms) => {
   let latUnit = 110.574;
-  let lngUnit = 111.320 * (Math.cos(latlng[0]) + Math.cos(latlng[1])) / 2;
-  return [
-    latlng[0] + kms[0] / latUnit,
-    latlng[1] + kms[1] / lngUnit
-  ];
+  let lat = latlng[0] + kms[0] / latUnit;
+  let lngUnit = 111.320 * (Math.cos(latlng[0]) + Math.cos(lat)) / 2;
+  let lng = latlng[1] + kms[1] / lngUnit;
+  return [ lat, lng ];
 }
 
 const mask = () => {
