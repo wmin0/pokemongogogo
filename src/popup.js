@@ -16,6 +16,10 @@ let initMapPromise = new Promise((resolve, reject) => {
   };
 });
 
+const pad = (num, width) => {
+  return ('0'.repeat(width) + num.toString()).slice(-width);
+};
+
 const mask = () => {
   document.querySelector('#mask').classList.add('show');
 };
@@ -81,10 +85,11 @@ const draw = () => {
   let page = chrome.extension.getBackgroundPage();
   document.querySelector('#alert').innerText = chrome.i18n.getMessage(page.statusStr);
   page.pokemons.forEach((pk) => {
-    // TODO: pic
     markers.push(new google.maps.Marker({
       map: map,
-      title: pk.nameZhTw,
+      title: pokedex[pad(pk.id, 3)].zh_TW,
+      icon: `pokedex/${pad(pk.id, 3)}.gif`,
+      optimized: false,
       position: {
         lat: pk.lat,
         lng: pk.lng

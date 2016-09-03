@@ -12,6 +12,10 @@ const emit = (dom, name, data) => {
   dom.dispatchEvent(event);
 };
 
+const pad = (num, width) => {
+  return ('0'.repeat(width) + num.toString()).slice(-width);
+};
+
 const speak = (msg) => {
   let utter = new SpeechSynthesisUtterance(msg);
   let voices = speechSynthesis.getVoices();
@@ -43,7 +47,7 @@ const getLeftTime = (ts) => {
 };
 
 const getMsg = (pk) => {
-  return `${pk.nameZhTw} 距離${getDistance([ pk.lat, pk.lng ]).toFixed(2)}km 剩下${getLeftTime(pk.time)}`;
+  return `${pokedex[pad(pk.id, 3)].zh_TW} 距離${getDistance([ pk.lat, pk.lng ]).toFixed(2)}km 剩下${getLeftTime(pk.time)}`;
 };
 
 const handleResponse = (data) => {
@@ -51,7 +55,7 @@ const handleResponse = (data) => {
   speechSynthesis.cancel();
   statusStr = data.pokemons.length === 0? 'alert_no_response': '';
   // TODO: configurable
-  pokemons = data.pokemons.filter((pk) => pk.stars.length > 2);
+  pokemons = data.pokemons.filter((pk) => pokedex[pad(pk.id, 3)].rare > 2);
   emit(document, 'changepokemon');
   pokemons.forEach((pk) => speak(getMsg(pk)));
 };
@@ -68,6 +72,7 @@ const func = () => {
     reset();
   });
   xhr.open('get', url, true);
+  xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
   xhr.send();
 };
 
