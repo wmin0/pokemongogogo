@@ -20,6 +20,7 @@
 
   "content_security_policy": "script-src 'self' https://maps.googleapis.com; object-src 'self'",
   "permissions": [
+    "cookies",
     "storage",
     "geolocation",
     "https://poke5566.com/*"

@@ -60,7 +60,11 @@ const func = () => {
   let xhr = new XMLHttpRequest();
   let url = `https://poke5566.com/pokemons?latBL=${settings.bounding[1][0]}&lngBL=${settings.bounding[1][1]}&latTR=${settings.bounding[0][0]}&lngTR=${settings.bounding[0][1]}`;
   xhr.addEventListener('load', (event) => {
-    handleResponse(JSON.parse(xhr.responseText));
+    if (xhr.status !== 200) {
+      handleResponse({ pokemons: [] });
+    } else {
+      handleResponse(JSON.parse(xhr.responseText));
+    }
     reset();
   });
   xhr.open('get', url, true);
@@ -111,9 +115,18 @@ const initEvent = () => {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-  new Promise((resolve, reject) => {
-    speechSynthesis.addEventListener('voiceschanged', resolve);
-  })
+  Promise.all([
+    new Promise((resolve, reject) => {
+      speechSynthesis.addEventListener('voiceschanged', resolve);
+    }),
+    new Promise((resolve, reject) => {
+      chrome.cookies.set({
+        url: 'https://poke5566.com',
+        name: '_ga',
+        value: '1',
+      }, resolve);
+    })
+  ])
   .then(load).then(initEvent);
 });
 
