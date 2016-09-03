@@ -31,5 +31,8 @@
   },
   "alert_not_setting": {
     "message": "尚未設定"
+  },
+  "alert_no_response": {
+    "message": "沒有資料來源"
   }
 }

@@ -3,6 +3,7 @@
 let timeout = null;
 let settings = null;
 window.pokemons = [];
+window.statusStr = '';
 
 const emit = (dom, name, data) => {
   let event = new CustomEvent(name, {
@@ -48,6 +49,7 @@ const getMsg = (pk) => {
 const handleResponse = (data) => {
   console.error('res', data.pokemons);
   speechSynthesis.cancel();
+  statusStr = data.pokemons.length === 0? 'alert_no_response': '';
   // TODO: configurable
   pokemons = data.pokemons.filter((pk) => pk.stars.length > 2);
   emit(document, 'changepokemon');
@@ -56,7 +58,7 @@ const handleResponse = (data) => {
 
 const func = () => {
   let xhr = new XMLHttpRequest();
-  let url = `https://poke5566.com/pokemons?latT=${settings.bounding[1][0]}&lngT=${settings.bounding[1][1]}&latU=${settings.bounding[0][0]}&lngU=${settings.bounding[0][1]}`;
+  let url = `https://poke5566.com/pokemons?latBL=${settings.bounding[1][0]}&lngBL=${settings.bounding[1][1]}&latTR=${settings.bounding[0][0]}&lngTR=${settings.bounding[0][1]}`;
   xhr.addEventListener('load', (event) => {
     handleResponse(JSON.parse(xhr.responseText));
     reset();

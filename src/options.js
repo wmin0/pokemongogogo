@@ -55,9 +55,9 @@ const set = (values) => {
   });
   boundingBox.setBounds({
     west: values.bounding[0][1],
-    north: values.bounding[0][0],
+    south: values.bounding[0][0],
     east: values.bounding[1][1],
-    south: values.bounding[1][0]
+    north: values.bounding[1][0]
   });
 };
 
@@ -106,8 +106,8 @@ const load = () => {
       }
       if (values.bounding.length === 0) {
         values.bounding = [
-          latlngAdd(values.center, [ 0.1, -0.1 ]),
-          latlngAdd(values.center, [ -0.1, 0.1 ])
+          latlngAdd(values.center, [ -0.1, -0.1 ]),
+          latlngAdd(values.center, [ 0.1, 0.1 ])
         ];
       }
       return set(values);

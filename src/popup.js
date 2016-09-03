@@ -78,7 +78,9 @@ const load = () => {
 const draw = () => {
   markers.forEach((marker) => marker.setMap(null));
   markers = [];
-  chrome.extension.getBackgroundPage().pokemons.forEach((pk) => {
+  let page = chrome.extension.getBackgroundPage();
+  document.querySelector('#alert').innerText = chrome.i18n.getMessage(page.statusStr);
+  page.pokemons.forEach((pk) => {
     // TODO: pic
     markers.push(new google.maps.Marker({
       map: map,
