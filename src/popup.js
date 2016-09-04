@@ -3,6 +3,54 @@
 let map = null;
 let centerMarker = null;
 let markers = [];
+let overlays = [];
+
+const pad = (num, width) => {
+  return ('0'.repeat(width) + num.toString()).slice(-width);
+};
+
+const getLeftTime = (ts) => {
+  let diff = ts - new Date().valueOf();
+  diff = new Date(diff < 0? 0: diff);
+  return `${pad(diff.getMinutes(), 2)}:${pad(diff.getSeconds(), 2)}`;
+};
+
+const define = () => {
+  class TimeOverlay extends google.maps.OverlayView {
+    constructor(options) {
+      super();
+      this._position = options.position;
+      this._time = options.time;
+      this._div = null;
+      this._timeout = null;
+      this.setMap(options.map);
+    }
+    update() {
+      this._div.innerText = getLeftTime(this._time);
+      this._timeout = setTimeout(() => this.update(), 1000);
+    }
+    onAdd() {
+      this._div = document.createElement('div');
+      this._div.classList.add('time-overlay');
+      this.getPanes().overlayLayer.appendChild(this._div);
+      this.update();
+    }
+    draw() {
+      let overlayProjection = this.getProjection();
+      let position = overlayProjection.fromLatLngToDivPixel(this._position);
+      this._div.style.left = `${position.x}px`;
+      this._div.style.top = `${position.y}px`;
+    }
+    onRemove() {
+      this._div.parentNode.removeChild(this._div);
+      this._div = null;
+      clearTimeout(this._timeout);
+      this._timeout = null;
+    }
+  };
+  window.TimeOverlay = TimeOverlay;
+};
+
 let initMapPromise = new Promise((resolve, reject) => {
   window.initMap = () => {
     map = new google.maps.Map(document.querySelector('#map'), {
@@ -12,13 +60,10 @@ let initMapPromise = new Promise((resolve, reject) => {
       map: map,
       title: chrome.i18n.getMessage('center')
     });
+    define();
     resolve();
   };
 });
-
-const pad = (num, width) => {
-  return ('0'.repeat(width) + num.toString()).slice(-width);
-};
 
 const mask = () => {
   document.querySelector('#mask').classList.add('show');
@@ -82,6 +127,8 @@ const load = () => {
 const draw = () => {
   markers.forEach((marker) => marker.setMap(null));
   markers = [];
+  overlays.forEach((overlay) => overlay.setMap(null));
+  overlays = [];
   let page = chrome.extension.getBackgroundPage();
   document.querySelector('#alert').innerText = chrome.i18n.getMessage(page.statusStr);
   page.pokemons.forEach((pk) => {
@@ -95,8 +142,13 @@ const draw = () => {
         lng: pk.lng
       }
     }));
+    overlays.push(new TimeOverlay({
+      map: map,
+      time: pk.time,
+      position: new google.maps.LatLng(pk.lat, pk.lng)
+    }));
   });
-  console.error(markers);
+  //console.error(markers, overlays);
 };
 
 const destroyEvent = () => {
