@@ -47,7 +47,7 @@ const getLeftTime = (ts) => {
 };
 
 const getMsg = (pk) => {
-  return `${pokedex[pad(pk.id, 3)].zh_TW} 距離${getDistance([ pk.lat, pk.lng ]).toFixed(2)}km 剩下${getLeftTime(pk.time)}`;
+  return `${pokedex[pad(pk.i, 3)].zh_TW} 距離${getDistance([ pk.a, pk.n ]).toFixed(2)}km 剩下${getLeftTime(pk.t)}`;
 };
 
 const handleResponse = (data) => {
@@ -55,14 +55,15 @@ const handleResponse = (data) => {
   speechSynthesis.cancel();
   statusStr = data.pokemons.length === 0? 'alert_no_response': '';
   // TODO: configurable
-  pokemons = data.pokemons.filter((pk) => pokedex[pad(pk.id, 3)].rare > 2);
+  // v-> iv, m->pokemonMoves "v":[1,3,4],"m":[235,62]
+  pokemons = data.pokemons.filter((pk) => pokedex[pad(pk.i, 3)].rare > 3);
   emit(document, 'changepokemon');
   pokemons.forEach((pk) => speak(getMsg(pk)));
 };
 
 const func = () => {
   let xhr = new XMLHttpRequest();
-  let url = `https://poke5566.com/pokemons?latBL=${settings.bounding[1][0]}&lngBL=${settings.bounding[1][1]}&latTR=${settings.bounding[0][0]}&lngTR=${settings.bounding[0][1]}`;
+  let url = `https://poke5566.com/pokemons?lat0=${settings.bounding[1][0]}&lng0=${settings.bounding[1][1]}&lat1=${settings.bounding[0][0]}&lng1=${settings.bounding[0][1]}`;
   xhr.addEventListener('load', (event) => {
     if (xhr.status !== 200) {
       handleResponse({ pokemons: [] });
@@ -129,6 +130,27 @@ document.addEventListener('DOMContentLoaded', () => {
         url: 'https://poke5566.com',
         name: '_ga',
         value: '1',
+      }, resolve);
+    }),
+    new Promise((resolve, reject) => {
+      chrome.cookies.set({
+        url: 'https://poke5566.com',
+        name: 'ss',
+        value: 'poke5566',
+      }, resolve);
+    }),
+    new Promise((resolve, reject) => {
+      chrome.cookies.set({
+        url: 'https://poke5566.com',
+        name: 'star',
+        value: '3',
+      }, resolve);
+    }),
+    new Promise((resolve, reject) => {
+      chrome.cookies.set({
+        url: 'https://poke5566.com',
+        name: 'iv',
+        value: '82',
       }, resolve);
     })
   ])

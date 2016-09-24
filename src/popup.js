@@ -134,18 +134,18 @@ const draw = () => {
   page.pokemons.forEach((pk) => {
     markers.push(new google.maps.Marker({
       map: map,
-      title: pokedex[pad(pk.id, 3)].zh_TW,
-      icon: `pokedex/${pad(pk.id, 3)}.gif`,
+      title: pokedex[pad(pk.i, 3)].zh_TW,
+      icon: `pokedex/${pad(pk.i, 3)}.gif`,
       optimized: false,
       position: {
-        lat: pk.lat,
-        lng: pk.lng
+        lat: pk.a,
+        lng: pk.n
       }
     }));
     overlays.push(new TimeOverlay({
       map: map,
-      time: pk.time,
-      position: new google.maps.LatLng(pk.lat, pk.lng)
+      time: pk.t,
+      position: new google.maps.LatLng(pk.a, pk.n)
     }));
   });
   //console.error(markers, overlays);
